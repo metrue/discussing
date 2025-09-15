@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      id-token: write
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+        registry-url: 'https://registry.npmjs.org'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run tests
+      run: npm test
+      
+    - name: Build package
+      run: npm run build
+      
+    - name: Create package tarball
+      run: npm pack
+      
+    - name: Extract version from tag
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+    - name: Create GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create v${{ steps.version.outputs.VERSION }} \
+          --title "Release v${{ steps.version.outputs.VERSION }}" \
+          --notes "## Changes in this Release
+          
+        See [CHANGELOG.md](./CHANGELOG.md) for details.
+        
+        ## Installation
+        
+        \`\`\`bash
+        npm install discussing@${{ steps.version.outputs.VERSION }}
+        \`\`\`
+        
+        ## Package Files
+        
+        - Source: https://github.com/metrue/discussing/archive/v${{ steps.version.outputs.VERSION }}.tar.gz
+        - NPM: https://www.npmjs.com/package/discussing/v/${{ steps.version.outputs.VERSION }}" \
+          --target main \
+          ./discussing-${{ steps.version.outputs.VERSION }}.tgz
+        
+    - name: Publish to npm
+      run: npm publish --provenance --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

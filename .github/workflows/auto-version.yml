@@ -1,0 +1,108 @@
+name: Auto Version Bump
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  auto-version:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      id-token: write
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Check if should skip
+      id: should_skip
+      run: |
+        if [[ "${{ github.event.head_commit.message }}" == *"chore: release v"* ]]; then
+          echo "skip=true" >> $GITHUB_OUTPUT
+          echo "Skipping - this is already a release commit"
+        else
+          echo "skip=false" >> $GITHUB_OUTPUT
+          echo "Proceeding with version bump"
+        fi
+        
+    - name: Use Node.js 20.x
+      if: steps.should_skip.outputs.skip == 'false'
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+        registry-url: 'https://registry.npmjs.org'
+        
+    - name: Configure Git
+      if: steps.should_skip.outputs.skip == 'false'
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        
+    - name: Install dependencies
+      if: steps.should_skip.outputs.skip == 'false'
+      run: npm ci
+      
+    - name: Run tests
+      if: steps.should_skip.outputs.skip == 'false'
+      run: npm test
+      
+    - name: Bump minor version and push
+      if: steps.should_skip.outputs.skip == 'false'
+      run: npm version minor
+      
+    - name: Get new version
+      if: steps.should_skip.outputs.skip == 'false'
+      id: version
+      run: echo "NEW_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+        
+    - name: Build package for release
+      if: steps.should_skip.outputs.skip == 'false'
+      run: npm run build
+      
+    - name: Create package tarball
+      if: steps.should_skip.outputs.skip == 'false'
+      run: npm pack
+      
+    - name: Create GitHub Release
+      if: steps.should_skip.outputs.skip == 'false'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create v${{ steps.version.outputs.NEW_VERSION }} \
+          --title "Release v${{ steps.version.outputs.NEW_VERSION }}" \
+          --notes "## Changes in this Release
+          
+        See [CHANGELOG.md](./CHANGELOG.md) for details.
+        
+        ## Installation
+        
+        \`\`\`bash
+        npm install discussing@${{ steps.version.outputs.NEW_VERSION }}
+        \`\`\`
+        
+        ## Package Files
+        
+        - Source: https://github.com/metrue/discussing/archive/v${{ steps.version.outputs.NEW_VERSION }}.tar.gz
+        - NPM: https://www.npmjs.com/package/discussing/v/${{ steps.version.outputs.NEW_VERSION }}" \
+          --target main \
+          ./discussing-${{ steps.version.outputs.NEW_VERSION }}.tgz
+        
+    - name: Publish to npm
+      if: steps.should_skip.outputs.skip == 'false'
+      run: npm publish --provenance --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
+    - name: Summary
+      if: steps.should_skip.outputs.skip == 'false'
+      run: |
+        echo "✅ Auto-bumped version to ${{ steps.version.outputs.NEW_VERSION }}"
+        echo "✅ Git tag created and pushed"
+        echo "✅ GitHub release created"
+        echo "🚀 Package published to npm"

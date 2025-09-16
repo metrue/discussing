@@ -7,16 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2025-09-16
+
 ### Added
 - CI/CD pipeline with GitHub Actions
 - Automated testing on Node.js 18.x, 20.x, and 22.x
 - Package size monitoring
 - Security audit in CI
 - Automated releases with Git tags
+- Interactive release script for easy version management
+- Automated dependent repository updates
 
 ### Changed
 - Updated repository URLs to point to github.com/metrue/discussing
 - Improved package.json with additional metadata
+- Enabled npm publishing with NPM_TOKEN
 
 ## [1.0.0] - 2024-09-16
 
@@ -39,5 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Testing**: Jest test suite with 95%+ coverage
 - **Documentation**: Comprehensive README with examples
 
-[Unreleased]: https://github.com/metrue/discussing/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/metrue/discussing/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/metrue/discussing/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/metrue/discussing/releases/tag/v1.0.0

@@ -3,19 +3,12 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import type { ExternalDiscussion, Comment, FetchOptions } from '../types'
 
-interface ExternalCommentsProps {
+interface DiscussionProps {
   discussions?: ExternalDiscussion[]
   className?: string
   fetchOptions?: FetchOptions
   /** Custom Image component for avatar rendering (e.g., Next.js Image) */
-  ImageComponent?: React.ComponentType<{
-    src: string
-    alt: string
-    width: number
-    height: number
-    className?: string
-    onError?: (e: React.SyntheticEvent<HTMLImageElement>) => void
-  }>
+  ImageComponent?: React.ComponentType<any>
   /** API endpoint for fetching comments (default: '/api/external-comments') */
   apiEndpoint?: string
   /** Enable refresh functionality */
@@ -25,7 +18,7 @@ interface ExternalCommentsProps {
 }
 
 /**
- * Client-side React component for external comments
+ * Client-side React component for external discussions
  * 
  * Benefits:
  * - Dynamic comment refresh without page reload
@@ -39,7 +32,7 @@ interface ExternalCommentsProps {
  * - You want loading states and error handling
  * - You're not using Next.js or want framework-agnostic solution
  */
-export default function ExternalComments({ 
+export default function Discussion({ 
   discussions = [], 
   className = '',
   fetchOptions = {},
@@ -47,7 +40,7 @@ export default function ExternalComments({
   apiEndpoint = '/api/external-comments',
   enableRefresh = false,
   refreshInterval = 300 // 5 minutes
-}: ExternalCommentsProps) {
+}: DiscussionProps) {
   const [commentsByPlatform, setCommentsByPlatform] = useState<Record<string, Comment[]>>({})
   const [loading, setLoading] = useState<Record<string, boolean>>({})
   const [error, setError] = useState<Record<string, string>>({})
@@ -237,7 +230,7 @@ function CommentItem({
 }: { 
   comment: Comment; 
   depth?: number;
-  ImageComponent?: ExternalCommentsProps['ImageComponent']
+  ImageComponent?: DiscussionProps['ImageComponent']
 }) {
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp)

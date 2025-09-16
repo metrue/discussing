@@ -34,7 +34,7 @@ pnpm add discussing
 For Next.js App Router with optimal performance:
 
 ```tsx
-import { ExternalCommentsServer } from 'discussing'
+import { DiscussionServer } from 'discussing'
 import Image from 'next/image'
 
 export default async function BlogPost() {
@@ -54,7 +54,7 @@ export default async function BlogPost() {
       <h1>My Blog Post</h1>
       <p>Blog content here...</p>
       
-      <ExternalCommentsServer
+      <DiscussionServer
         discussions={discussions}
         ImageComponent={Image}
         fetchOptions={{ cacheTimeout: 300 }}
@@ -71,7 +71,7 @@ For dynamic functionality and non-Next.js frameworks:
 ```tsx
 'use client'
 
-import { ExternalComments } from 'discussing'
+import { Discussion } from 'discussing'
 import { useState } from 'react'
 
 export default function BlogPost() {
@@ -87,7 +87,7 @@ export default function BlogPost() {
       <h1>My Blog Post</h1>
       <p>Blog content here...</p>
       
-      <ExternalComments
+      <Discussion
         discussions={discussions}
         enableRefresh={true}
         refreshInterval={300}
@@ -107,12 +107,12 @@ export default function BlogPost() {
 
 ## API Reference
 
-### ExternalCommentsServer
+### DiscussionServer (Recommended)
 
 React Server Component for optimal performance.
 
 ```tsx
-interface ExternalCommentsServerProps {
+interface DiscussionServerProps {
   discussions?: ExternalDiscussion[]
   className?: string
   fetchOptions?: FetchOptions
@@ -132,12 +132,12 @@ interface ExternalCommentsServerProps {
 - ✅ Better SEO (comments in initial HTML)
 - ✅ Server-side caching with Next.js revalidation
 
-### ExternalComments
+### Discussion
 
 Client component for dynamic functionality.
 
 ```tsx
-interface ExternalCommentsProps {
+interface DiscussionProps {
   discussions?: ExternalDiscussion[]
   className?: string
   fetchOptions?: FetchOptions
@@ -184,7 +184,7 @@ interface Comment {
 ### Custom Styling
 
 ```tsx
-<ExternalCommentsServer
+<DiscussionServer
   className="my-8 border-t border-gray-200 pt-8"
   discussions={discussions}
 />
@@ -195,7 +195,7 @@ interface Comment {
 ```tsx
 import Image from 'next/image'
 
-<ExternalCommentsServer
+<DiscussionServer
   ImageComponent={Image}
   discussions={discussions}
 />
@@ -204,7 +204,7 @@ import Image from 'next/image'
 ### Caching Configuration
 
 ```tsx
-<ExternalCommentsServer
+<DiscussionServer
   fetchOptions={{
     cacheTimeout: 600, // 10 minutes
     userAgent: 'MyBlog Bot 1.0'
@@ -216,7 +216,7 @@ import Image from 'next/image'
 ### Auto-refresh (Client Component)
 
 ```tsx
-<ExternalComments
+<Discussion
   enableRefresh={true}
   refreshInterval={300} // 5 minutes
   discussions={discussions}
@@ -258,11 +258,11 @@ const hnComments = await fetchHackerNewsComments(
 
 ### Next.js App Router
 
-Use `ExternalCommentsServer` for optimal performance:
+Use `DiscussionServer` for optimal performance:
 
 ```tsx
 // app/blog/[slug]/page.tsx
-import { ExternalCommentsServer } from 'discussing'
+import { DiscussionServer } from 'discussing'
 
 export default async function BlogPage({ params }: { params: { slug: string } }) {
   const discussions = await getDiscussionsForPost(params.slug)
@@ -270,7 +270,7 @@ export default async function BlogPage({ params }: { params: { slug: string } })
   return (
     <main>
       <BlogContent slug={params.slug} />
-      <ExternalCommentsServer discussions={discussions} />
+      <DiscussionServer discussions={discussions} />
     </main>
   )
 }
@@ -282,13 +282,13 @@ Use the client component:
 
 ```tsx
 // pages/blog/[slug].tsx
-import { ExternalComments } from 'discussing'
+import { Discussion } from 'discussing'
 
 export default function BlogPage({ discussions }) {
   return (
     <main>
       <BlogContent />
-      <ExternalComments discussions={discussions} />
+      <Discussion discussions={discussions} />
     </main>
   )
 }

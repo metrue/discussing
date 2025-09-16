@@ -28,9 +28,9 @@ function createFetchOptions(options: FetchOptions = {}): RequestInit {
       // Try to add Next.js cache options if we're in a Next.js environment
       return {
         ...baseOptions,
-        // @ts-expect-error - Next.js specific fetch option
-        next: { revalidate: options.cacheTimeout || 300 }
-      }
+        // Next.js specific fetch option
+        ...(options.cacheTimeout && { next: { revalidate: options.cacheTimeout } })
+      } as RequestInit
     } catch {
       // Fallback to standard fetch if Next.js options aren't available
       return baseOptions

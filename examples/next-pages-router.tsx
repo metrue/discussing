@@ -1,7 +1,7 @@
 // Example: Next.js Pages Router with Client Components
 // File: pages/blog/[slug].tsx
 
-import { ExternalComments } from 'discussing'
+import { Discussion } from 'discussing'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
@@ -44,7 +44,7 @@ export default function BlogPage({ post }: Props) {
         {isClient && (
           <section className="mt-16">
             <h2 className="text-2xl font-bold mb-6">External Discussions</h2>
-            <ExternalComments
+            <Discussion
               discussions={post.discussions}
               className="border-t border-gray-200 pt-8"
               enableRefresh={true}

@@ -2,22 +2,16 @@ import React from 'react'
 import { fetchAllExternalComments } from '../utils/fetch-comments'
 import type { ExternalDiscussion, Comment, FetchOptions } from '../types'
 
-interface ExternalCommentsServerProps {
+interface DiscussionServerProps {
   discussions?: ExternalDiscussion[]
   className?: string
   fetchOptions?: FetchOptions
   /** Custom Image component for avatar rendering (e.g., Next.js Image) */
-  ImageComponent?: React.ComponentType<{
-    src: string
-    alt: string
-    width: number
-    height: number
-    className?: string
-  }>
+  ImageComponent?: React.ComponentType<any>
 }
 
 /**
- * React Server Component for external comments
+ * React Server Component for external discussions
  * 
  * Benefits:
  * - Zero JavaScript bundle impact
@@ -30,12 +24,12 @@ interface ExternalCommentsServerProps {
  * - Comments don't need to refresh without page reload
  * - You're using Next.js with App Router
  */
-export default async function ExternalCommentsServer({ 
+export default async function DiscussionServer({ 
   discussions = [], 
   className = '',
   fetchOptions = {},
   ImageComponent
-}: ExternalCommentsServerProps) {
+}: DiscussionServerProps) {
   if (discussions.length === 0) {
     return null
   }
@@ -116,7 +110,7 @@ function CommentItem({
 }: { 
   comment: Comment; 
   depth?: number;
-  ImageComponent?: ExternalCommentsServerProps['ImageComponent']
+  ImageComponent?: DiscussionServerProps['ImageComponent']
 }) {
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp)

@@ -1,7 +1,7 @@
 // Example: Vite + React Application
 // File: src/components/BlogPost.tsx
 
-import { ExternalComments } from 'discussing'
+import { Discussion } from 'discussing'
 import { useState, useEffect } from 'react'
 
 interface BlogPost {
@@ -93,7 +93,7 @@ export default function BlogPost({ postId }: Props) {
             </span>
           </div>
           
-          <ExternalComments
+          <Discussion
             discussions={post.discussions}
             className="border-t border-gray-200 pt-8"
             enableRefresh={true}

@@ -1,7 +1,7 @@
 // Example: Next.js App Router with Server Components
 // File: app/blog/[slug]/page.tsx
 
-import { ExternalCommentsServer } from 'discussing'
+import { DiscussionServer } from 'discussing'
 import Image from 'next/image'
 
 interface BlogPost {
@@ -49,7 +49,7 @@ export default async function BlogPage({
 
       {/* Server-rendered external comments */}
       <section className="mt-16">
-        <ExternalCommentsServer
+        <DiscussionServer
           discussions={post.discussions}
           className="border-t border-gray-200 pt-8"
           ImageComponent={Image}

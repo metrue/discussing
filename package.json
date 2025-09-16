@@ -22,8 +22,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/external-comments-react.git"
+    "url": "https://github.com/metrue/discussing.git"
   },
+  "bugs": {
+    "url": "https://github.com/metrue/discussing/issues"
+  },
+  "homepage": "https://github.com/metrue/discussing#readme",
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
@@ -43,10 +47,15 @@
   },
   "scripts": {
     "build": "tsc",
+    "clean": "rm -rf dist/",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "prepublishOnly": "npm run build && npm test"
+    "lint": "echo 'No linting configured yet'",
+    "prepack": "npm run clean && npm run build",
+    "prepublishOnly": "npm run build && npm test",
+    "version": "npm run build && npm test",
+    "postversion": "git push && git push --tags"
   },
   "engines": {
     "node": ">=16.0.0"

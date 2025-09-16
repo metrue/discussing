@@ -75,8 +75,7 @@ jobs:
         asset_name: discussing-${{ steps.version.outputs.VERSION }}.tgz
         asset_content_type: application/gzip
         
-    # Uncomment when ready to publish to npm
-    # - name: Publish to npm
-    #   run: npm publish --provenance --access public
-    #   env:
-    #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    - name: Publish to npm
+      run: npm publish --provenance --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

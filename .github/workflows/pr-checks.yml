@@ -36,8 +36,7 @@ jobs:
     - name: Verify package contents
       run: |
         npm pack --dry-run
-        echo "Package size:"
-        npm pack --dry-run 2>/dev/null | grep -o '[0-9.]*[kM]B'
+        echo "✅ Package validation completed"
         
     - name: Check for breaking changes
       run: |

@@ -59,24 +59,21 @@ export default async function DiscussionServer({
           return (
             <div key={`${discussion.platform}-${discussion.url}`}>
               {/* Section divider with platform name */}
-              <div className="relative mb-8">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
+              <div className="flex items-center mb-8">
+                <div className="flex-1 border-t border-gray-200"></div>
+                <div className="px-4 text-sm text-gray-600">
+                  <span>Discussing on </span>
+                  <a
+                    href={discussion.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-900 font-medium hover:text-gray-700"
+                    style={{ textDecoration: 'none' }}
+                  >
+                    {getPlatformName(discussion.platform)}
+                  </a>
                 </div>
-                <div className="relative flex justify-center">
-                  <div className="px-4 text-sm text-gray-600" style={{ backgroundColor: 'white' }}>
-                    <span>Discussing on </span>
-                    <a
-                      href={discussion.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-900 font-medium hover:text-gray-700"
-                      style={{ textDecoration: 'none' }}
-                    >
-                      {getPlatformName(discussion.platform)}
-                    </a>
-                  </div>
-                </div>
+                <div className="flex-1 border-t border-gray-200"></div>
               </div>
 
               {platformComments.length > 0 && (

@@ -148,12 +148,9 @@ export default function Discussion({
           return (
             <div key={`${discussion.platform}-${discussion.url}`}>
               {/* Section divider with platform name */}
-              <div className="relative mb-8">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
-                </div>
-                <div className="relative flex justify-center">
-                  <div className="px-4 text-sm text-gray-600" style={{ backgroundColor: 'white' }}>
+              <div className="flex items-center mb-8">
+                <div className="flex-1 border-t border-gray-200"></div>
+                <div className="px-4 text-sm text-gray-600">
                     <span>Discussing on </span>
                     <a
                       href={discussion.url}
@@ -181,8 +178,8 @@ export default function Discussion({
                         </button>
                       </>
                     )}
-                  </div>
                 </div>
+                <div className="flex-1 border-t border-gray-200"></div>
               </div>
 
               {hasError && (

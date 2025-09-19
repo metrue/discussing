@@ -64,13 +64,14 @@ export default async function DiscussionServer({
                   <div className="w-full border-t border-gray-200"></div>
                 </div>
                 <div className="relative flex justify-center">
-                  <div className="px-4 text-sm text-gray-600">
+                  <div className="px-4 text-sm text-gray-600 bg-white">
                     <span>Discussing on </span>
                     <a
                       href={discussion.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-900 underline hover:no-underline"
+                      className="text-gray-900 font-medium hover:text-gray-700"
+                      style={{ textDecoration: 'none' }}
                     >
                       {getPlatformName(discussion.platform)}
                     </a>

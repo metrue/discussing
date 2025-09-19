@@ -66,8 +66,5 @@
   },
   "engines": {
     "node": ">=16.0.0"
-  },
-  "dependencies": {
-    "discussing": "file:discussing-1.0.2-fixed.tgz"
   }
 }

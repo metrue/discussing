@@ -64,7 +64,7 @@ export default async function DiscussionServer({
                   <div className="w-full border-t border-gray-200"></div>
                 </div>
                 <div className="relative flex justify-center">
-                  <div className="px-4 text-sm text-gray-600 bg-white">
+                  <div className="px-4 text-sm text-gray-600" style={{ backgroundColor: 'white' }}>
                     <span>Discussing on </span>
                     <a
                       href={discussion.url}

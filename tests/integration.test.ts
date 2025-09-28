@@ -338,8 +338,12 @@ describe('Integration Tests', () => {
       expect(result.v2ex).toHaveLength(1)
       expect(result.reddit).toEqual([]) // Should be empty on failure
       expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining('Error fetching Reddit comments'),
-        expect.any(Error)
+        expect.stringContaining('Error fetching Reddit comments:'),
+        expect.objectContaining({
+          url: expect.any(String),
+          error: expect.any(String),
+          timestamp: expect.any(String)
+        })
       )
     })
 

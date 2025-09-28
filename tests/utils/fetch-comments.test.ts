@@ -36,7 +36,7 @@ describe('fetchV2exComments', () => {
       'https://www.v2ex.com/api/replies/show.json?topic_id=12345',
       expect.objectContaining({
         headers: expect.objectContaining({
-          'User-Agent': 'Mozilla/5.0 (compatible; Blog Comment Fetcher)'
+          'User-Agent': 'Mozilla/5.0 (compatible; DiscussingLibrary/1.0; +https://github.com/metrue/discussing)'
         })
       })
     )
@@ -214,6 +214,125 @@ describe('fetchRedditComments', () => {
     const result = await fetchRedditComments('https://reddit.com/r/test/comments/123/')
     expect(result).toHaveLength(1)
     expect(result[0].content).toBe('Valid comment')
+  })
+
+  it('should handle www.reddit.com URLs correctly', async () => {
+    const mockResponse = [
+      {},
+      {
+        data: {
+          children: [
+            {
+              kind: 't1',
+              data: {
+                id: 'abc123',
+                author: 'reddituser',
+                body: 'Reddit comment',
+                created_utc: 1234567890,
+                score: 42
+              }
+            }
+          ]
+        }
+      }
+    ]
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockResponse
+    } as Response)
+
+    const result = await fetchRedditComments('https://www.reddit.com/r/programming/comments/7su688/fx_is_a_homemade_faas_tool_like_aws_lambda/')
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://reddit.com/r/programming/comments/7su688/fx_is_a_homemade_faas_tool_like_aws_lambda.json',
+      expect.any(Object)
+    )
+    expect(result).toHaveLength(1)
+    expect(result[0].id).toBe('reddit-abc123')
+  })
+
+  it('should handle URLs with trailing slashes', async () => {
+    const mockResponse = [
+      {},
+      {
+        data: {
+          children: [
+            {
+              kind: 't1',
+              data: {
+                id: 'abc123',
+                author: 'reddituser',
+                body: 'Reddit comment',
+                created_utc: 1234567890,
+                score: 42
+              }
+            }
+          ]
+        }
+      }
+    ]
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockResponse
+    } as Response)
+
+    const result = await fetchRedditComments('https://www.reddit.com/r/test/comments/123/')
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://reddit.com/r/test/comments/123.json',
+      expect.any(Object)
+    )
+    expect(result).toHaveLength(1)
+  })
+
+  it('should handle empty response array', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => []
+    } as Response)
+
+    const result = await fetchRedditComments('https://reddit.com/r/test/comments/123/')
+    expect(result).toEqual([])
+  })
+
+  it('should handle response with no comments', async () => {
+    const mockResponse = [
+      {},
+      {
+        data: {
+          children: []
+        }
+      }
+    ]
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockResponse
+    } as Response)
+
+    const result = await fetchRedditComments('https://reddit.com/r/test/comments/123/')
+    expect(result).toEqual([])
+  })
+
+  it('should handle HTTP error responses with detailed logging', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
+
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 403,
+      statusText: 'Forbidden'
+    } as Response)
+
+    const result = await fetchRedditComments('https://reddit.com/r/test/comments/123/')
+    
+    expect(result).toEqual([])
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Reddit API error: 403 Forbidden')
+    )
+
+    consoleSpy.mockRestore()
   })
 })
 

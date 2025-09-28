@@ -14,7 +14,7 @@ function decodeHtmlEntities(text: string): string {
 }
 
 function createFetchOptions(options: FetchOptions = {}): RequestInit {
-  const { userAgent = 'Mozilla/5.0 (compatible; Blog Comment Fetcher)' } = options
+  const { userAgent = 'Mozilla/5.0 (compatible; DiscussingLibrary/1.0; +https://github.com/metrue/discussing)' } = options
   
   const baseOptions: RequestInit = {
     headers: {
@@ -71,15 +71,36 @@ export async function fetchV2exComments(url: string, options: FetchOptions = {})
 
 export async function fetchRedditComments(url: string, options: FetchOptions = {}): Promise<Comment[]> {
   try {
-    // Add .json to Reddit URL
-    const jsonUrl = url.replace(/\/$/, '') + '.json'
+    // Normalize Reddit URL and add .json
+    let normalizedUrl = url.trim()
+    
+    // Handle www subdomain consistently
+    normalizedUrl = normalizedUrl.replace(/\/\/www\.reddit\.com/, '//reddit.com')
+    
+    // Remove trailing slash and add .json
+    const jsonUrl = normalizedUrl.replace(/\/$/, '') + '.json'
     
     const response = await fetch(jsonUrl, createFetchOptions(options))
     
-    if (!response.ok) throw new Error('Failed to fetch Reddit comments')
+    if (!response.ok) {
+      console.error(`Reddit API error: ${response.status} ${response.statusText} for URL: ${jsonUrl}`)
+      throw new Error(`Failed to fetch Reddit comments: ${response.status} ${response.statusText}`)
+    }
     
     const data = await response.json()
-    const commentsData = data[1]?.data?.children || []
+    
+    // Validate Reddit API response structure
+    if (!Array.isArray(data) || data.length < 2) {
+      console.error('Invalid Reddit API response structure:', { url: jsonUrl, dataLength: data?.length })
+      throw new Error('Invalid Reddit API response: expected array with at least 2 elements')
+    }
+    
+    if (!data[1]?.data?.children) {
+      console.error('Missing comments data in Reddit API response:', { url: jsonUrl, hasData1: !!data[1], hasData: !!data[1]?.data })
+      return [] // Return empty array for posts without comments
+    }
+    
+    const commentsData = data[1].data.children
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const parseRedditComments = (items: any[]): Comment[] => {
@@ -102,7 +123,12 @@ export async function fetchRedditComments(url: string, options: FetchOptions = {
     
     return parseRedditComments(commentsData)
   } catch (error) {
-    console.error('Error fetching Reddit comments:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    console.error('Error fetching Reddit comments:', {
+      url,
+      error: errorMessage,
+      timestamp: new Date().toISOString()
+    })
     return []
   }
 }

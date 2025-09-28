@@ -4,7 +4,7 @@
 [![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A React component library for fetching and displaying comments from external discussion platforms like V2EX, Reddit, and Hacker News. Supports both React Server Components for optimal performance and traditional client components for dynamic functionality.
+A React component library for fetching and displaying comments from external discussion platforms like Hacker News, Reddit, and V2EX. Supports both React Server Components for optimal performance and traditional client components for dynamic functionality.
 
 ## Features
 

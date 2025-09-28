@@ -14,7 +14,7 @@ function decodeHtmlEntities(text: string): string {
 }
 
 function createFetchOptions(options: FetchOptions = {}): RequestInit {
-  const { userAgent = 'Mozilla/5.0 (compatible; DiscussingLibrary/1.0; +https://github.com/minghe/discussing)' } = options
+  const { userAgent = 'Mozilla/5.0 (compatible; DiscussingLibrary/1.0; +https://github.com/metrue/discussing)' } = options
   
   const baseOptions: RequestInit = {
     headers: {

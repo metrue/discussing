@@ -36,7 +36,7 @@ describe('fetchV2exComments', () => {
       'https://www.v2ex.com/api/replies/show.json?topic_id=12345',
       expect.objectContaining({
         headers: expect.objectContaining({
-          'User-Agent': 'Mozilla/5.0 (compatible; DiscussingLibrary/1.0; +https://github.com/minghe/discussing)'
+          'User-Agent': 'Mozilla/5.0 (compatible; DiscussingLibrary/1.0; +https://github.com/metrue/discussing)'
         })
       })
     )

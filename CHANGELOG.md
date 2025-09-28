@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-09-28
+
 ### Fixed
 - Reddit URL normalization to handle www subdomain consistently
 - Reddit comment fetching to properly remove trailing slashes
@@ -65,3 +67,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.0.1]: https://github.com/metrue/discussing/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/metrue/discussing/releases/tag/v1.0.0[1.0.2]: https://github.com/metrue/discussing/compare/v...v1.0.2
 [1.1.0]: https://github.com/metrue/discussing/compare/v...v1.1.0
+[1.2.0]: https://github.com/metrue/discussing/compare/v...v1.2.0

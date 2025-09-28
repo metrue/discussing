@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Reddit URL normalization to handle www subdomain consistently
+- Reddit comment fetching to properly remove trailing slashes
+- Enhanced error logging with HTTP status codes and timestamps
+- Reddit API response validation before parsing
+- Package dependencies cleanup (removed accidental self-dependency)
+
+### Changed
+- Updated User-Agent string to identify as DiscussingLibrary with repository URL
+
+### Added
+- Additional test cases for Reddit URL edge cases (www URLs, trailing slashes, empty responses, HTTP errors)
+
 ## [1.1.0] - 2025-09-19
 
 ## [1.0.2] - 2025-09-16

@@ -50,26 +50,14 @@ jobs:
       if: steps.should_skip.outputs.skip == 'false'
       run: npm test
       
-    - name: Bump minor version
+    - name: Bump minor version and push
       if: steps.should_skip.outputs.skip == 'false'
-      run: npm version minor --no-git-tag-version
+      run: npm version minor
       
     - name: Get new version
       if: steps.should_skip.outputs.skip == 'false'
       id: version
       run: echo "NEW_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-      
-    - name: Commit and tag version
-      if: steps.should_skip.outputs.skip == 'false'
-      run: |
-        git add package.json package-lock.json
-        git commit -m "chore: release v${{ steps.version.outputs.NEW_VERSION }}"
-        git tag "v${{ steps.version.outputs.NEW_VERSION }}"
-        
-    - name: Push changes and tags
-      if: steps.should_skip.outputs.skip == 'false'
-      run: |
-        git push --follow-tags
         
     - name: Summary
       if: steps.should_skip.outputs.skip == 'false'

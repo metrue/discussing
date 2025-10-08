@@ -152,10 +152,8 @@ function CommentItem({
             <span className="text-gray-400 text-xs">{comment.votes} points</span>
           )}
         </div>
-        <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-base relative text-justify">
-          <span className="absolute -left-1 -top-1 text-gray-400 text-xl font-serif">&ldquo;</span>
-          <span className="pl-3">{comment.content}</span>
-          <span className="text-gray-400 text-xl font-serif">&rdquo;</span>
+        <div className="text-gray-600 leading-relaxed whitespace-pre-wrap text-base">
+          {comment.content}
         </div>
       </blockquote>
       

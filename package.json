@@ -1,6 +1,6 @@
 {
   "name": "discussing",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "React components for fetching and displaying comments from external discussion platforms",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

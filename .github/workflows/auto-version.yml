@@ -1,0 +1,61 @@
+name: Auto Version Bump
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  auto-version:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'chore: release v')
+    
+    permissions:
+      contents: write
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+        
+    - name: Configure Git
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run tests
+      run: npm test
+      
+    - name: Bump minor version
+      run: npm version minor --no-git-tag-version
+      
+    - name: Get new version
+      id: version
+      run: echo "NEW_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      
+    - name: Commit and tag version
+      run: |
+        git add package.json package-lock.json
+        git commit -m "chore: release v${{ steps.version.outputs.NEW_VERSION }}"
+        git tag "v${{ steps.version.outputs.NEW_VERSION }}"
+        
+    - name: Push changes and tags
+      run: |
+        git push --follow-tags
+        
+    - name: Summary
+      run: |
+        echo "✅ Auto-bumped version to ${{ steps.version.outputs.NEW_VERSION }}"
+        echo "✅ Git tag created and pushed"
+        echo "🚀 Release workflow will now automatically publish to npm"

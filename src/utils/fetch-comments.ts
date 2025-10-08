@@ -20,6 +20,7 @@ function createFetchOptions(options: FetchOptions = {}): RequestInit {
     headers: {
       'User-Agent': userAgent,
     },
+    redirect: 'follow',
   }
 
   // Add Next.js caching if available (runtime detection)

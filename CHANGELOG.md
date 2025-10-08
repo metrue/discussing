@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2025-10-08
+
 ## [1.2.0] - 2025-09-28
 
 ### Fixed
@@ -68,3 +70,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.0.0]: https://github.com/metrue/discussing/releases/tag/v1.0.0[1.0.2]: https://github.com/metrue/discussing/compare/v...v1.0.2
 [1.1.0]: https://github.com/metrue/discussing/compare/v...v1.1.0
 [1.2.0]: https://github.com/metrue/discussing/compare/v...v1.2.0
+[1.3.0]: https://github.com/metrue/discussing/compare/v...v1.3.0

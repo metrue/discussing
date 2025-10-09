@@ -1,8 +1,6 @@
 # Discussing
 
-**Effortlessly integrate discussions from V2EX, Reddit, and Hacker News into your React applications with zero configuration.**
-
-> Test change to verify CI automation works properly.
+Effortlessly integrate discussions from Hacker News, Reddit, and V2EX into your React applications with zero configuration.
 
 ## Installation
 

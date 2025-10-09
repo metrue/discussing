@@ -10,6 +10,7 @@ jobs:
     
     permissions:
       contents: write
+      id-token: write
       
     steps:
     - name: Checkout code
@@ -35,6 +36,7 @@ jobs:
       with:
         node-version: 20.x
         cache: 'npm'
+        registry-url: 'https://registry.npmjs.org'
         
     - name: Configure Git
       if: steps.should_skip.outputs.skip == 'false'
@@ -59,9 +61,48 @@ jobs:
       id: version
       run: echo "NEW_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
         
+    - name: Build package for release
+      if: steps.should_skip.outputs.skip == 'false'
+      run: npm run build
+      
+    - name: Create package tarball
+      if: steps.should_skip.outputs.skip == 'false'
+      run: npm pack
+      
+    - name: Create GitHub Release
+      if: steps.should_skip.outputs.skip == 'false'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create v${{ steps.version.outputs.NEW_VERSION }} \
+          --title "Release v${{ steps.version.outputs.NEW_VERSION }}" \
+          --notes "## Changes in this Release
+          
+        See [CHANGELOG.md](./CHANGELOG.md) for details.
+        
+        ## Installation
+        
+        \`\`\`bash
+        npm install discussing@${{ steps.version.outputs.NEW_VERSION }}
+        \`\`\`
+        
+        ## Package Files
+        
+        - Source: https://github.com/metrue/discussing/archive/v${{ steps.version.outputs.NEW_VERSION }}.tar.gz
+        - NPM: https://www.npmjs.com/package/discussing/v/${{ steps.version.outputs.NEW_VERSION }}" \
+          --target main \
+          ./discussing-${{ steps.version.outputs.NEW_VERSION }}.tgz
+        
+    - name: Publish to npm
+      if: steps.should_skip.outputs.skip == 'false'
+      run: npm publish --provenance --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        
     - name: Summary
       if: steps.should_skip.outputs.skip == 'false'
       run: |
         echo "✅ Auto-bumped version to ${{ steps.version.outputs.NEW_VERSION }}"
         echo "✅ Git tag created and pushed"
-        echo "🚀 Release workflow will now automatically publish to npm"
+        echo "✅ GitHub release created"
+        echo "🚀 Package published to npm"

@@ -21,8 +21,13 @@ jobs:
         
     - name: Check if should skip
       id: should_skip
+      env:
+        # Pass the commit message via the environment instead of inlining it
+        # into the script. Inlining breaks the `[[ ]]` test for multi-line
+        # messages or ones containing backticks/quotes (shell injection).
+        COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
       run: |
-        if [[ "${{ github.event.head_commit.message }}" == *"chore: release v"* ]]; then
+        if [[ "$COMMIT_MESSAGE" == *"chore: release v"* ]]; then
           echo "skip=true" >> $GITHUB_OUTPUT
           echo "Skipping - this is already a release commit"
         else

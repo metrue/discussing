@@ -4,9 +4,6 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { formatRelativeTime, renderCommentContent } from '../utils/comment-format'
 import type { ExternalDiscussion, Comment, FetchOptions } from '../types'
 
-/** Top-level comments shown before the rest collapse behind a "show more" disclosure. */
-const VISIBLE_COMMENTS = 8
-
 interface DiscussionProps {
   discussions?: ExternalDiscussion[]
   className?: string
@@ -205,7 +202,7 @@ export default function Discussion({
               {!hasError && platformComments.length > 0 && (
                 <>
                   <div className="space-y-7">
-                    {platformComments.slice(0, VISIBLE_COMMENTS).map((comment) => (
+                    {platformComments.map((comment) => (
                       <CommentItem
                         key={comment.id}
                         comment={comment}
@@ -213,26 +210,6 @@ export default function Discussion({
                       />
                     ))}
                   </div>
-
-                  {platformComments.length > VISIBLE_COMMENTS && (
-                    <details className="group mt-7">
-                      <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-xs uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                        <span className="group-open:hidden">
-                          Show {platformComments.length - VISIBLE_COMMENTS} more comments
-                        </span>
-                        <span className="hidden group-open:inline">Show fewer comments</span>
-                      </summary>
-                      <div className="space-y-7 mt-7">
-                        {platformComments.slice(VISIBLE_COMMENTS).map((comment) => (
-                          <CommentItem
-                            key={comment.id}
-                            comment={comment}
-                            ImageComponent={ImageComponent}
-                          />
-                        ))}
-                      </div>
-                    </details>
-                  )}
                 </>
               )}
 
@@ -321,7 +298,7 @@ function CommentItem({
 
         {comment.replies && comment.replies.length > 0 && (
           <div className="mt-5 space-y-5 border-l border-gray-100 dark:border-gray-800 pl-4">
-            {comment.replies.slice(0, 2).map((reply: Comment) => (
+            {comment.replies.map((reply: Comment) => (
               <CommentItem
                 key={reply.id}
                 comment={reply}
@@ -329,26 +306,6 @@ function CommentItem({
                 ImageComponent={ImageComponent}
               />
             ))}
-            {comment.replies.length > 2 && (
-              <details className="group/replies">
-                <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                  <span className="group-open/replies:hidden">
-                    Show {comment.replies.length - 2} more {comment.replies.length - 2 === 1 ? 'reply' : 'replies'}
-                  </span>
-                  <span className="hidden group-open/replies:inline">Show fewer replies</span>
-                </summary>
-                <div className="mt-5 space-y-5">
-                  {comment.replies.slice(2).map((reply: Comment) => (
-                    <CommentItem
-                      key={reply.id}
-                      comment={reply}
-                      depth={depth + 1}
-                      ImageComponent={ImageComponent}
-                    />
-                  ))}
-                </div>
-              </details>
-            )}
           </div>
         )}
       </div>

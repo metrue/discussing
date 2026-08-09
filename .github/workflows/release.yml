@@ -1,4 +1,18 @@
-name: Release
+name: Release (npm)
+
+# Publishes `discussing` to npm when a version tag is pushed.
+#
+# Auth: npm Trusted Publisher (OIDC) — NO NPM_TOKEN secret. Set up the trust on
+# npmjs.com → package `discussing` → Settings → Trusted publishing → GitHub Actions.
+# ALL FIELDS ARE CASE-SENSITIVE AND MUST BE EXACT:
+#   Organization or user: metrue
+#   Repository:           discussing
+#   Workflow filename:    release.yml
+#   Environment name:     (blank)
+#   Allowed actions:      npm publish
+#
+# Requirements (docs.npmjs.com/trusted-publishers): npm CLI >= 11.5.1 AND
+# Node >= 22.14.0.
 
 on:
   push:
@@ -6,64 +20,72 @@ on:
       - 'v*'
 
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-latest
-    
     permissions:
-      contents: write
-      id-token: write
-      
+      contents: read
+      id-token: write # OIDC trusted publishing + provenance
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Use Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-        cache: 'npm'
-        registry-url: 'https://registry.npmjs.org'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run tests
-      run: npm test
-      
-    - name: Build package
-      run: npm run build
-      
-    - name: Create package tarball
-      run: npm pack
-      
-    - name: Extract version from tag
-      id: version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-      
-    - name: Create GitHub Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh release create v${{ steps.version.outputs.VERSION }} \
-          --title "Release v${{ steps.version.outputs.VERSION }}" \
-          --notes "## Changes in this Release
-          
-        See [CHANGELOG.md](./CHANGELOG.md) for details.
-        
-        ## Installation
-        
-        \`\`\`bash
-        npm install discussing@${{ steps.version.outputs.VERSION }}
-        \`\`\`
-        
-        ## Package Files
-        
-        - Source: https://github.com/metrue/discussing/archive/v${{ steps.version.outputs.VERSION }}.tar.gz
-        - NPM: https://www.npmjs.com/package/discussing/v/${{ steps.version.outputs.VERSION }}" \
-          --target main \
-          ./discussing-${{ steps.version.outputs.VERSION }}.tgz
-        
-    - name: Publish to npm
-      run: npm publish --provenance --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - uses: actions/checkout@v4
+
+      # Intentionally NO `registry-url`. setup-node's registry-url writes an
+      # .npmrc `_authToken=${NODE_AUTH_TOKEN}` line (with a placeholder token when
+      # none is provided), which makes npm attempt token auth and skip OIDC → E404.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22' # trusted publishing requires Node >= 22.14.0
+
+      # Node 22 ships npm 10.x; trusted publishing needs npm >= 11.5.1.
+      - name: Upgrade npm (OIDC support)
+        run: npm install -g npm@11
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Verify tag matches package version
+        run: |
+          PKG_VERSION="v$(node -p "require('./package.json').version")"
+          if [ "$PKG_VERSION" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match package.json version ${PKG_VERSION}" >&2
+            exit 1
+          fi
+
+      - name: Build
+        run: npm run build
+
+      - name: Create package tarball
+        run: npm pack
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create v${{ steps.version.outputs.VERSION }} \
+            --title "Release v${{ steps.version.outputs.VERSION }}" \
+            --notes "## Changes in this Release
+
+          See [CHANGELOG.md](./CHANGELOG.md) for details.
+
+          ## Installation
+
+          \`\`\`bash
+          npm install discussing@${{ steps.version.outputs.VERSION }}
+          \`\`\`
+
+          ## Package Files
+
+          - Source: https://github.com/metrue/discussing/archive/v${{ steps.version.outputs.VERSION }}.tar.gz
+          - NPM: https://www.npmjs.com/package/discussing/v/${{ steps.version.outputs.VERSION }}" \
+            --target main \
+            ./discussing-${{ steps.version.outputs.VERSION }}.tgz
+
+      # No NODE_AUTH_TOKEN: auth is via the OIDC trusted publisher.
+      - name: Publish to npm
+        run: npm publish --provenance --access public

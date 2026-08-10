@@ -66,7 +66,7 @@ export default async function DiscussionServer({
                   href={discussion.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="group inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.12em] text-gray-500 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                   style={{ textDecoration: 'none' }}
                 >
                   <span>Discussing on</span>
@@ -88,7 +88,7 @@ export default async function DiscussionServer({
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">
+                <p className="text-sm text-gray-500 dark:text-gray-500 text-center py-2">
                   No comments yet.
                 </p>
               )}
@@ -125,12 +125,20 @@ function CommentItem({
             alt={comment.author}
             width={size}
             height={size}
+            referrerPolicy="no-referrer"
             className="w-full h-full object-cover"
           />
         ) : comment.avatar ? (
+          // Raw fallback (no ImageComponent supplied): suppress referrer to avoid
+          // leaking the reader's URL, and lazy-load since avatars sit below the
+          // fold. NOTE: this path still sends third-party cookies — pass an
+          // ImageComponent (e.g. next/image) to proxy same-origin and drop them.
           <img
             src={comment.avatar}
             alt={comment.author}
+            referrerPolicy="no-referrer"
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
           />
         ) : (
@@ -145,11 +153,11 @@ function CommentItem({
             {comment.author}
           </span>
           <span className="text-gray-300 dark:text-gray-600">·</span>
-          <time title={timeTitle} className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
+          <time title={timeTitle} className="text-xs text-gray-500 dark:text-gray-500 whitespace-nowrap">
             {timeLabel}
           </time>
           {comment.votes !== undefined && (
-            <span className="ml-auto text-xs text-gray-400 dark:text-gray-500 tabular-nums whitespace-nowrap">
+            <span className="ml-auto text-xs text-gray-500 dark:text-gray-500 tabular-nums whitespace-nowrap">
               {comment.votes} points
             </span>
           )}

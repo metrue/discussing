@@ -151,7 +151,7 @@ export default function Discussion({
               {/* Section divider with platform name */}
               <div className="flex items-center gap-4 mb-10">
                 <div className="flex-1 border-t border-gray-200 dark:border-gray-700/70"></div>
-                <div className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">
+                <div className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.12em] text-gray-500 dark:text-gray-500">
                   <a
                     href={discussion.url}
                     target="_blank"
@@ -214,7 +214,7 @@ export default function Discussion({
               )}
 
               {!isLoading && !hasError && platformComments.length === 0 && (
-                <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-2">
+                <p className="text-sm text-gray-500 dark:text-gray-500 text-center py-2">
                   No comments yet.
                 </p>
               )}
@@ -261,13 +261,18 @@ function CommentItem({
             alt={comment.author}
             width={size}
             height={size}
+            referrerPolicy="no-referrer"
             className="w-full h-full object-cover"
             onError={handleImageError}
           />
         ) : comment.avatar ? (
+          // Third-party avatars: no referrer, lazy/async (see DiscussionServer).
           <img
             src={comment.avatar}
             alt={comment.author}
+            referrerPolicy="no-referrer"
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
             onError={handleImageError}
           />
@@ -283,11 +288,11 @@ function CommentItem({
             {comment.author}
           </span>
           <span className="text-gray-300 dark:text-gray-600">·</span>
-          <time title={timeTitle} className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
+          <time title={timeTitle} className="text-xs text-gray-500 dark:text-gray-500 whitespace-nowrap">
             {timeLabel}
           </time>
           {comment.votes !== undefined && (
-            <span className="ml-auto text-xs text-gray-400 dark:text-gray-500 tabular-nums whitespace-nowrap">
+            <span className="ml-auto text-xs text-gray-500 dark:text-gray-500 tabular-nums whitespace-nowrap">
               {comment.votes} points
             </span>
           )}
